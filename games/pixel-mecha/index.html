@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PIXEL MECHA DUEL</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0718;
+        --panel: #150e2b;
+        --line: #3a2264;
+        --text: #dff4ff;
+        --muted: #8f7fb5;
+        --accent: #41c7f5;
+        --accent-2: #ff8a3c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        padding: 24px 16px 40px;
+        background:
+          radial-gradient(circle at 50% 0%, #241546 0%, transparent 55%),
+          repeating-linear-gradient(0deg, #0b0718 0px, #0b0718 2px, #0e0920 2px, #0e0920 4px),
+          var(--bg);
+        color: var(--text);
+        font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+      }
+
+      header {
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 6px;
+        color: var(--accent);
+        text-shadow: 0 2px 0 #7a2a00;
+      }
+
+      .subtitle {
+        margin: 6px 0 0;
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--muted);
+      }
+
+      .bezel {
+        padding: 12px;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: #0a0716;
+        box-shadow: 0 0 0 4px #120b24, 0 18px 40px rgba(0, 0, 0, 0.6);
+      }
+
+      canvas {
+        display: block;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background: #150e2b;
+      }
+
+      .status {
+        min-height: 18px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--accent-2);
+      }
+
+      .panels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+        max-width: 780px;
+      }
+
+      .panel {
+        flex: 1 1 260px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 12px 14px;
+        background: var(--panel);
+      }
+
+      .panel h2 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: var(--accent);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      td {
+        padding: 3px 0;
+        color: var(--muted);
+      }
+
+      td:last-child {
+        text-align: right;
+        color: var(--text);
+      }
+
+      kbd {
+        display: inline-block;
+        min-width: 18px;
+        padding: 1px 5px;
+        border: 1px solid var(--line);
+        border-bottom-width: 2px;
+        border-radius: 3px;
+        background: #1e1338;
+        color: var(--text);
+        font-size: 11px;
+      }
+
+      footer {
+        max-width: 780px;
+        font-size: 11px;
+        line-height: 1.7;
+        color: var(--muted);
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>PIXEL MECHA DUEL</h1>
+      <p class="subtitle">像素机甲对战 · 1v1 · ROUND BASED</p>
+    </header>
+
+    <div class="bezel">
+      <canvas id="screen" width="320" height="180"></canvas>
+    </div>
+
+    <div class="status" id="status">PRESS M TO TOGGLE SOUND</div>
+
+    <div class="panels">
+      <section class="panel">
+        <h2>PLAYER 1</h2>
+        <table>
+          <tr><td>移动</td><td><kbd>A</kbd> <kbd>D</kbd></td></tr>
+          <tr><td>跳跃</td><td><kbd>W</kbd></td></tr>
+          <tr><td>轻斩</td><td><kbd>J</kbd></td></tr>
+          <tr><td>重斩</td><td><kbd>K</kbd></td></tr>
+          <tr><td>防御</td><td><kbd>L</kbd>（按住）</td></tr>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>PLAYER 2</h2>
+        <table>
+          <tr><td>移动</td><td><kbd>←</kbd> <kbd>→</kbd></td></tr>
+          <tr><td>跳跃</td><td><kbd>↑</kbd></td></tr>
+          <tr><td>轻斩</td><td><kbd>1</kbd></td></tr>
+          <tr><td>重斩</td><td><kbd>2</kbd></td></tr>
+          <tr><td>防御</td><td><kbd>3</kbd>（按住）</td></tr>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>SYSTEM</h2>
+        <table>
+          <tr><td>CPU / 双人</td><td><kbd>V</kbd></td></tr>
+          <tr><td>CPU 难度</td><td><kbd>C</kbd></td></tr>
+          <tr><td>暂停</td><td><kbd>P</kbd></td></tr>
+          <tr><td>静音</td><td><kbd>M</kbd></td></tr>
+          <tr><td>重开</td><td><kbd>R</kbd></td></tr>
+        </table>
+      </section>
+    </div>
+
+    <footer>
+      每回合 60 秒，倒计时结束按剩余血量判定；先胜 2 回合者赢下整场。防御可挡下对手招式并保留能量反击，每次格挡消耗 8 点能量，能量不足时防御会被打破。
+    </footer>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

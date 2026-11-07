@@ -166,8 +166,12 @@ WebAudio 实时合成，无音频文件：出招是短促方波扫频，命中�
 ```sh
 # 任意静态服务器即可，无需构建、无需安装依赖
 python3 -m http.server 8080 --directory games/pixel-mecha
+# 或者用自带的零依赖 Node 服务器
+node games/pixel-mecha/tools/serve.mjs
 # 浏览器打开 http://localhost:8080/
 ```
+
+游戏用原生 ES Module 加载脚本，必须经 http 协议访问，直接双击 `index.html`（file://）会被浏览器的模块跨域策略拦下。
 
 无头出图核对（用于验证画面而不打开浏览器）：
 
